@@ -1,0 +1,232 @@
+<html>
+
+<head>
+    <script src='http://ajax.googleapis.com/ajax/libs/angularjs/1.3.9/angular.min.js'></script>
+</head>
+
+<body>
+    <h2>The Basics</h2>
+    <div id="angularjsPortletDemo">
+        <label>Name:</label>
+        <input ng-model="yourName" placeholder="Enter a name here" type="text" />
+        <hr />
+        <h3>Hello {{yourName}}!</h3>
+    </div>
+    <script>
+        (function () {
+            startAngular1();
+
+            function startAngular1() {
+                var myApp = angular.module('angularjsPortletDemo', []);
+
+                var appRootElem = document.getElementById('angularjsPortletDemo');
+                angular.bootstrap(appRootElem, ['angularjsPortletDemo']);
+            }
+        })();
+    </script>
+
+
+
+    <h2>Add Some Control</h2>
+    <div id="addsomecontrol1" ng-controller="TodoController"><span>{{remaining()}} of {{todos.length}} remaining</span> [ <a href="" ng-click="archive()">archive</a> ]
+        <ul class="unstyled">
+            <li ng-repeat="todo in todos">
+                <input ng-model="todo.done" type="checkbox" /> <span class="done-{{todo.done}}">{{todo.text}}</span>
+            </li>
+        </ul>
+
+        <form ng-submit="addTodo()">
+            <input ng-model="todoText" placeholder="add new todo here" size="30" type="text" />
+            <input class="btn-primary" type="submit" value="add" />&nbsp;</form>
+    </div>
+    <script>
+        (function () {
+            startAngular2();
+            
+            function startAngular2() {
+                var myApp = angular.module('addsomecontrol1', []);
+
+                myApp.controller('TodoController', ['$scope',
+                    function ($scope) {
+                        $scope.todos = [
+                            {
+                                text: 'learn angular',
+                                done: true
+                            },
+                            {
+                                text: 'build an angular app',
+                                done: false
+                            }
+  ];
+
+                        $scope.addTodo = function () {
+                            $scope.todos.push({
+                                text: $scope.todoText,
+                                done: false
+                            });
+                            $scope.todoText = '';
+                        };
+
+                        $scope.remaining = function () {
+                            var count = 0;
+                            angular.forEach($scope.todos, function (todo) {
+                                count += todo.done ? 0 : 1;
+                            });
+                            return count;
+                        };
+
+                        $scope.archive = function () {
+                            var oldTodos = $scope.todos;
+                            $scope.todos = [];
+                            angular.forEach(oldTodos, function (todo) {
+                                if (!todo.done) $scope.todos.push(todo);
+                            });
+                        };
+}]);
+                var appRootElem = document.getElementById('addsomecontrol1');
+                angular.bootstrap(appRootElem, ['addsomecontrol1']);
+            }
+        })();
+    </script>
+
+
+
+    <h2>Create Components</h2>
+    <div id="createComp">
+        <!--<tabs> <pane title="Localization">-->Date: {{ '2012-04-01' | date:'fullDate' }}
+        <br />Currency: {{ 123456 | currency }}
+        <br />Number: {{ 98765.4321 | number }}
+        <!--</pane> <pane title="Pluralization"> <div ng-controller="BeerCounter">
+<div ng-repeat="beerCount in beers"><ng-pluralize count="beerCount" when="beerForms"></ng-pluralize></div>
+</div>
+</pane> </tabs>-->
+    </div>
+    <script>
+        (function () {
+            startAngular4();
+
+            function startAngular4() {
+                angular.module('mydirective', [])
+                    .directive('tabs', function () {
+                        return {
+                            restrict: 'E',
+                            transclude: true,
+                            scope: {},
+                            controller: function ($scope, $element) {
+                                var panes = $scope.panes = [];
+                                $scope.select = function (pane) {
+                                    angular.forEach(panes, function (pane) {
+                                        pane.selected = false;
+                                    });
+                                    pane.selected = true;
+                                }
+                                this.addPane = function (pane) {
+                                    if (panes.length == 0) $scope.select(pane);
+                                    panes.push(pane);
+                                }
+                            },
+                            template: '<div class="tabbable">' +
+                                '<ul class="nav nav-tabs">' +
+                                '<li ng-repeat="pane in panes" ng-class="{active:pane.selected}">' +
+                                '<a href="" ng-click="select(pane)">{{pane.title}}</a>' +
+                                '</li>' +
+                                '</ul>' +
+                                '<div class="tab-content" ng-transclude></div>' +
+                                '</div>',
+                            replace: true
+                        };
+                    })
+                    .directive('pane', function () {
+                        return {
+                            require: '^tabs',
+                            restrict: 'E',
+                            transclude: true,
+                            scope: {
+                                title: '@'
+                            },
+                            link: function (scope, element, attrs, tabsCtrl) {
+                                tabsCtrl.addPane(scope);
+                            },
+                            template: '<div class="tab-pane" ng-class="{active: selected}" ng-transclude>' +
+                                '</div>',
+                            replace: true
+                        };
+                    });
+
+                var myApp = angular.module('createComp', ['mydirective']);
+                myApp.controller('BeerCounter', function ($scope, $locale) {
+                    $scope.beers = [0, 1, 2, 3, 4, 5, 6];
+                    /*if ($locale.id == 'en-us') {*/
+                    $scope.beerForms = {
+                        0: 'no beers',
+                        one: '{} beer',
+                        other: '{} beers'
+                    };
+                    /*} else {
+    $scope.beerForms = {
+      0: 'žiadne pivo',
+      one: '{} pivo',
+      few: '{} pivá',
+      other: '{} pív'
+    };
+  }*/
+                });
+
+                var appRootElem = document.getElementById('createComp');
+                angular.bootstrap(appRootElem, ['createComp']);
+            }
+        });
+    </script>
+
+
+    
+    <h2>Wire up a Backend</h2>
+    <div>To be implemented</div>
+    
+    
+
+    <!--http://architects.dzone.com/articles/liferay-and-angularjs-made-->
+    <h2>Injection</h2>
+    <div id="injectExample" ng-controller="companiesController">
+        <div ng-if="data.message !== undefined">{{data.message}} {{data.exception}}</div>
+
+        <div ng-if="isArray(data)">
+            <ul>
+                <li ng-repeat="x in data">{{'affiliate: ' + x.affiliate + ', producer: ' + x.producer + ', products: ' + x.products[0]}}</li>
+            </ul>
+        </div>
+
+        <div ng-if="!isArray(data)">
+            <ul>
+                <li>{{'affiliate: ' + data.affiliate + ', producer: ' + data.producer + ', products: ' + data.products[0]}}</li>
+            </ul>
+        </div>
+    </div>
+    <script>
+        (function () {
+            var getData = function ($scope, $http) {
+                $scope.isArray = angular.isArray;
+                //http://localhost:8079/api/jsonws
+                //http://localhost:8079/api/jsonws/company/get-company-by-id/company-id/0
+                //http://localhost:8079/api/jsonws/country/get-country-by-name/name/antarctica
+                //http://localhost:8079/api/jsonws/country/get-countries?p_auth=ltY37EyD
+                $http.get("http://localhost:8100/csa-service/web/affiliateContext?aff=demopart")
+                    .success(function (response) {
+                        $scope.data = response
+                    });
+            }
+            getData.$inject = ['$scope', '$http'];
+
+            function startAngular3() {
+                angular.module('injectExample', [])
+                    .controller('companiesController', getData);
+                var appRootElem = document.getElementById('injectExample');
+                angular.bootstrap(appRootElem, ['injectExample']);
+            }
+
+            startAngular3();
+        })();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html ng-app="scotchApp">
+<head>
+    <title>AngularJs Post Example: DevZone.co.in </title>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular-route.js"></script>
+
+    <script data-require="jquery@*" data-semver="2.0.3" src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+    <script data-require="bootstrap@*" data-semver="3.0.2" src="//netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
+
+    <script src="script.js"></script>
+    <style>
+        #dv1{
+            border:1px solid #DBDCE9; margin-left:auto;
+            margin-right:auto;width:220px;
+            border-radius:7px;padding: 25px;
+        }
+
+        .info{
+            border: 1px solid;margin: 10px 0px;
+            padding:10px;color: #00529B;
+            background-color: #BDE5F8;list-style: none;
+        }
+        .err{
+            border: 1px solid;  margin: 10px 0px;
+            padding:10px;  color: #D8000C;
+            background-color: #FFBABA;   list-style: none;
+        }
+    </style>
+</head>
+<body>
+<div id='dv1'>
+    <form ng-controller="FrmController">
+        <ul>
+            <li class="err" ng-repeat="error in errors"> {{ error}} </li>
+        </ul>
+        <ul>
+            <li class="info" ng-repeat="msg in msgs"> {{ msg}} </li>
+        </ul>
+        <h2>Policy Search</h2>
+        <div>
+            <label  style=width:75px; >Enter Policy</label>
+            <input type="text"   ng-model="policy"  placeholder="08345W0939-001" style='margin-left: 22px;'>
+        </div>
+        <!--<div>-->
+        <!--<label>Email</label>-->
+        <!--<input type="text" ng-model="useremail" placeholder="Email" style='margin-left: 22px;'>-->
+        <!--</div>-->
+        <!--<div>-->
+        <!--<label>Password</label>-->
+        <!--<input type="password" ng-model="userpassword" placeholder="Password">-->
+        <!--</div>-->
+        <button ng-click='SignUp();' style='margin-left: 63px;margin-top:10px'>Submit</button>
+        <!--<input type="file" name="file" onchange="angular.element(this).scope().uploadFile(this.uploadFile(this.files))"/>-->
+
+    </form>
+</div>
+
+<script type="text/javascript">
+    function FrmController($scope, $http, $location) {
+        $scope.errors = [];
+        $scope.msgs = [];
+
+        $scope.policy =  "08345W0939-001"
+
+        $scope.SignUp = function() {
+
+            $scope.errors.splice(0, $scope.errors.length); // remove all error messages
+            $scope.msgs.splice(0, $scope.msgs.length);
+
+            $http.post("/claim_services/rest/policy/policyDetailsJson", {'policyNumber': $scope.policy}
+            ).success(function(data, status, headers, config) {
+                        if (data.msg != '')
+                        {
+                            $scope.changeView();;
+
+
+//                            $scope.msgs.push(data);
+                        }
+                        else
+                        {
+                            $scope.errors.push(data.error);
+                        }
+                    }).error(function(data, status) { // called asynchronously if an error occurs
+// or server returns response with an error status.
+                        $scope.errors.push(status);
+                    });
+        }
+
+        $scope.changeView = function(){
+            var url = '/./table' ;
+//            $location.path(url);
+
+            window.location.href = "#/table";
+
+        }
+
+    }
+
+    $scope.uploadFile = function(files) {
+        var fd = new FormData();
+        //Take the first selected file
+        fd.append("file", files[0]);
+
+        $http.post(uploadUrl, fd, {
+            withCredentials: true,
+            headers: {'Content-Type': undefined },
+            transformRequest: angular.identity
+        }).success(" ...all right!..." ).error(" ..damn!... ");
+
+    };
+
+</script>
+
+</body>
+</html>

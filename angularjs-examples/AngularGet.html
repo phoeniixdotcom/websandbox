@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js"></script>
+</head>
+
+<body ng-app="myapp">
+
+<!--<div ng-controller="MyController" >-->
+    <!--<ul>-->
+        <!--<li ng-repeat="item in myData.items"-->
+            <!--ng-click="myData.doClick(item, $event)">Click here</li>-->
+    <!--</ul>-->
+<!--</div>-->
+
+<!--<script>-->
+    <!--angular.module("myapp", [])-->
+            <!--.controller("MyController", function($scope) {-->
+                <!--$scope.myData = {};-->
+                <!--$scope.myData.items = [{ v: "1"}, { v: "2"}, { v : "3"} ];-->
+
+                <!--$scope.myData.doClick = function(item, event) {-->
+                    <!--alert("clicked: " + item.v + " @ " + event.clientX + ": " + event.clientY);-->
+                <!--}-->
+
+
+            <!--} );-->
+<!--</script>-->
+
+
+<div ng-controller="MyController" >
+<button ng-click="myData.doClick(item, $event)">Send AJAX Request</button>
+<br/>
+Data from server: {{myData.fromServer}}
+</div>
+
+<script>
+    angular.module("myapp", [])
+            .controller("MyController", function($scope, $http) {
+                $scope.myData = {};
+                $scope.myData.doClick = function(item, event) {
+
+                    var responsePromise = $http.get("/EclaimApplication-1.0/rest/claim/admUser");
+
+                    responsePromise.success(function(data, status, headers, config) {
+                        alert(data);
+                        $scope.myData.fromServer = data
+                    });
+                    responsePromise.error(function(data, status, headers, config) {
+                        alert("AJAX failed!");
+                    });
+                }
+
+
+            } );
+
+
+    function TestController($scope, $http) {
+        $http({
+            url: 'http://samedomain.com/GetPersons',
+            method: "POST",
+            data: postData,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        }).success(function (data, status, headers, config) {
+            $scope.persons = data; // assign  $scope.persons here as promise is resolved here
+        }).error(function (data, status, headers, config) {
+            $scope.status = status;
+        });
+
+    }
+
+
+
+
+</script>
+
+
+
+
+
+
+</body>
+</html>
