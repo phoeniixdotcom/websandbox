@@ -1,0 +1,53 @@
+{
+  "name": "gga-template",
+  "version": "0.0.1",
+  "dependencies": {
+    "expose-loader": "^0.7.1"
+  },
+  "devDependencies": {
+    "babelify": "~6.0.2",
+    "bootstrap": "^3.3.6",
+    "bootstrap-sass": "^3.3.6",
+    "chai": "^3.5.0",
+    "compass": "^0.1.1",
+    "compass-loader": "0.0.4",
+    "compass-mixins": "^0.12.7",
+    "copy-webpack-plugin": "^1.1.1",
+    "css-loader": "^0.23.1",
+    "del": "^2.2.0",
+    "font-awesome": "^4.5.0",
+    "glob": "^7.0.3",
+    "glob-all": "^3.0.1",
+    "gulp": "^3.9.1",
+    "gulp-compass": "^2.1.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-ext-replace": "^0.2.0",
+    "gulp-ignore": "^2.0.1",
+    "gulp-inject-string": "^1.1.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-shell": "^0.5.2",
+    "gulp-uglify": "^1.5.3",
+    "jquery.dotdotdot": "^1.7.4",
+    "jshint": "^2.9.1",
+    "jshint-loader": "^0.8.3",
+    "jshint-stylish": "0.4.0",
+    "mocha": "^2.4.5",
+    "node-sass": "^3.4.2",
+    "sass-loader": "^3.2.0",
+    "strip-loader": "^0.1.2",
+    "style-loader": "^0.13.0",
+    "susy": "^2.2.12",
+    "vinyl-source-stream": "1.1.0",
+    "watchify": "~3.2.1",
+    "webpack": "^1.12.14",
+    "webpack-glob-entries": "^1.0.1",
+    "webpack-stream": "^3.1.0",
+    "wiredep": "~1.8.5"
+  },
+  "scripts": {
+    "build": "webpack"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  }
+}
