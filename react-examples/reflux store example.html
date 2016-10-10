@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hello React!</title>
+    <script src="https://unpkg.com/react@15.3.2/dist/react-with-addons.min.js"></script>
+    <script src="https://unpkg.com/react-dom@15.3.2/dist/react-dom.min.js"></script>
+    <script src="https://unpkg.com/babel-core@5.8.38/browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/refluxjs/0.4.1/reflux.min.js"></script>
+    <style>
+      .hidden {display:none;}
+    </style>
+  </head>
+  <body>
+    <div id="example"></div>
+    <script type="text/babel">
+      var Actions = Reflux.createActions({
+        'change': {children: ['completed','failed']},
+        'submit': {children: ['completed','failed']}
+      });
+
+      // Creates a DataStore
+      var formStore = Reflux.createStore({
+          init: function() {
+              this.formData = {},
+              this.listenTo(Actions.change, this.output);
+          },
+          output: function(value) {
+              console.log('from change', value);
+              this.formData.email = value;
+              this.trigger(this.formData);
+          }
+      });
+
+      var Form = React.createClass({
+        getInitialState: function() {
+          return {
+            store: formStore
+          }
+        },
+        onStatusChange: function(newStore) {
+          console.log('store changed!', newStore);
+          this.setState({store: newStore});
+        },
+        componentDidMount: function() {
+          this.unsubscribe = formStore.listen(this.onStatusChange);
+        },
+        componentWillUnmount: function() {
+          this.unsubscribe();
+        },
+        render: function() {
+          console.log('on render', this.state.store);
+          return (
+            <form action={this.props.action}>
+              <Input
+                  className="test"
+                  value={this.state.store.email}
+                  validations={['required', 'email']}/>,
+            </form>
+          );
+        }
+      });
+
+      var Input = React.createClass({
+        getDefaultProps: function() {
+          return {
+            className: '',
+            value: '',
+            validations: []
+          }
+        },
+        getInitialState: function() {
+          return {
+            value: '',
+            isInvalid: false,
+            errorMessage: ''
+          }
+        },
+        errorMessages: {
+          required: 'This field is required.',
+          email: 'This is not an email.'
+        },
+        getValue: function(){
+          return this.props.value;
+        },
+        changeValue: function(event){
+          this.detectError(event.target.value);
+          this.setState({value: event.target.value});
+        },
+        detectError: function(value){
+          if (value === '') {
+            this.setState({isInvalid: true, errorMessage: this.errorMessages.required})
+            return;
+          } else if (!/[a-z0-9]+@[a-z0-9]+\.[a-z]+/.test(this.state.value.toLowerCase())) {
+            this.setState({isInvalid: true, errorMessage: this.errorMessages.email})
+            return;
+          } else {
+            this.setState({isInvalid: false, errorMessage: ''});
+            return;
+          }
+        },
+        runVal: function(event) {
+          Actions.change(event.target.value);
+        },
+        render: function() {
+          var errorClass = this.state.isInvalid ? '' : 'hidden';
+          return (
+            <div className={this.props.className}>
+              <input type="text" onChange={this.runVal} value={this.props.value}/>
+              <span className={errorClass}>{this.state.errorMessage}</span>
+            </div>
+          );
+        }
+      });
+
+      ReactDOM.render(
+        <Form
+          action='someurl/'/>,
+        document.getElementById('example')
+      );
+    </script>
+  </body>
+</html>
