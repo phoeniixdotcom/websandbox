@@ -1,0 +1,72 @@
+<html>
+<head>
+	
+</head>
+<body>
+	<p>This file demonstrates the proper script loading order for a new Backbone project.</p>
+	
+	<div id="example">
+		<p><button id="click-me">Click Me</button></p>
+		<label for="message" style="display: block;">Mesasge<label>
+		<textarea name="message" style="display: block; width: 500px;"></textarea>
+		<div id="message"></div>
+	</div>
+	
+	<script src="https://code.jquery.com/jquery-1.11.3.js"></script>
+	<script src="javascripts/libs/lodash.js"></script>
+	<script src="javascripts/libs/backbone.js"></script>
+	<script src="javascripts/libs/backbone.puree.js"></script>
+	<script src="javascripts/libs/backbone.mixin.js"></script>
+	<script src="javascripts/libs/backbone.validation.js"></script>
+	<script src="javascripts/libs/backbone.stickit.js"></script>
+	<script src="javascripts/app.js"></script>
+	
+	<script>
+		App.start();
+		
+		// define the view's "class"
+		var ExampleView = Backbone.View.extend({
+			// setup event handlers
+			events: {
+				'click #click-me': 'setMessageText'
+			},
+			
+			// setup two way data binding.
+			bindings: {
+				'[name="message"]': 'message'
+			},
+			
+			// called automatically by Backbone when a new instance is created
+			initialize: function () {
+				// generate our template function
+				this.template = _.template('<p>{{message}}</p><p>Renderd on [[ var d = new Date(); print(d); ]].</p>')
+				// listen for changes on the model and rerender the view
+				this.listenTo(this.model, 'change', this.render);
+				// apply two-way data binding
+				this.stickit();
+			},
+			
+			render: function () {
+				// render our dynamic content into an element with id="message"
+				// this.$ scopes the jQuery lookup to the view's "el"" property.
+				// el is specified below when the view is created.
+				this.$('#message').html(this.template(this.model.toJSON()));
+			},
+			
+			setMessageText: function () {
+				// change the model's "message" property value
+				this.model.set({message: 'I clicked the button.'});
+			}
+		});
+		
+		// create an instance of the view
+		var exampleView = new ExampleView({
+			el: '#example', // set the view's element
+			model: new Backbone.Model({message: 'This text was rendered by a Backbone view.'}) // create the data model
+		});
+
+		// render the view		
+		exampleView.render();
+	</script>
+</body>
+</html>
